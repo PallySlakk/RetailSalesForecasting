@@ -1,26 +1,15 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
+# --- ALLOW IMPORTANT FILES (UNIGNORE) ---
+!data/raw/kaggle_store_sales.csv
+!data/raw/ecuador_weather_daily.csv
+!data/processed/features.parquet
+!data/processed/merged_sales_weather.parquet
+!models/*.joblib
+!reports/metrics/*.json
+!reports/metrics/*.csv
 
-# Data
-data/raw/*.csv
-data/processed/*.parquet
-data/processed/*.pkl
-data/processed/*.joblib
-
-# Models
-models/*.joblib
-
-# Metrics / reports
-reports/metrics/*.json
-reports/metrics/*.csv
-
-# Figures
-reports/figures/*.png
-
-# Streamlit cache
-.streamlit/
-
-# Notebooks checkpoints
-.ipynb_checkpoints/
+# --- unIGNORE EVERYTHING ELSE LARGE ---
+!data/raw/*
+!data/processed/*
+!models/*
+!reports/metrics/*
+!reports/figures/*
