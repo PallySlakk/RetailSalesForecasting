@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Data
+data/raw/*.csv
+data/processed/*.parquet
+data/processed/*.pkl
+data/processed/*.joblib
+
+# Models
+models/*.joblib
+
+# Metrics / reports
+reports/metrics/*.json
+reports/metrics/*.csv
+
+# Figures
+reports/figures/*.png
+
+# Streamlit cache
+.streamlit/
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
