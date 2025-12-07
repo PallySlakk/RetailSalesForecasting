@@ -36,32 +36,32 @@ A complete end-to-end machine learning system for forecasting daily retail sales
 
 ---
 
-## 🧱 Project Structure
+## 📂 Project Structure
 
+```text
 retail_sales_forecasting/
 │
-├── main.py # Full ML pipeline (data → features → models → metrics)
-├── config.py # Central configuration file
-├── requirements.txt # Project dependencies
+├── main.py                   # Full ML pipeline (data → features → models → metrics)
+├── config.py                 # Central configuration file
+├── requirements.txt          # Project dependencies
 │
 ├── dashboard/
-│ └── app.py # Terminal dashboard (Rich + Typer)
+│   └── app.py                # Terminal dashboard (Rich + Typer)
 │
 ├── data/
-│ ├── raw/ # Raw input data (sales + weather)
-│ └── processed/ # Cleaned & merged datasets
+│   ├── raw/                  # Raw input data (sales + weather)
+│   └── processed/            # Cleaned & merged datasets
 │
-├── models/ # Trained ML model artifacts (.joblib)
+├── models/                   # Trained ML model artifacts (.joblib)
 │
 ├── reports/
-│ ├── metrics/ # Model performance reports (JSON, CSV)
-│ └── figures/ # Generated plots & visualizations
+│   ├── metrics/              # Model performance reports (JSON, CSV)
+│   └── figures/              # Generated plots & visualizations
 │
 └── src/
-├── data/ # Data loading & preprocessing modules
-├── features/ # Feature engineering modules
-└── models/ # Training, evaluation, and forecasting modules
-
+    ├── data/                 # Data loading & preprocessing modules
+    ├── features/             # Feature engineering modules
+    └── models/               # Training, evaluation, and forecasting modules
 
 ---
 
