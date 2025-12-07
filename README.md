@@ -75,19 +75,26 @@ Build features, train models, and generate metrics:
 python3 main.py
 
 ## 🖥️ Terminal Dashboard (Rich + Typer)
+Run the application without arguments to access an interactive menu:
 
-### 📊 View Model Metrics
-python3 app.py metrics
+ python3 app.py
 
-### 🔍 Browse Validation Predictions
-python3 app.py browse
+- This launches a beautiful terminal dashboard with the following options:
 
-### 🌦️ Inspect Weather vs Sales
-python3 app.py weather
+### 📊 1. View Model Metrics
+- Displays comprehensive model performance metrics including RMSE, R², and prediction accuracy.
 
-### 🧪 What-If Simulator
-Simulate new temperature & rainfall conditions:
-python3 app.py simulate
+### 🔍 2. Browse Validation Predictions
+- Explore detailed predictions vs actual sales across all validation samples with search and filter capabilities.
+
+### 🌦️ 3. Inspect Weather vs Sales
+- Visualize the relationship between weather conditions (temperature, rainfall) and sales performance.
+
+### 🧪 4. What-If Simulator
+- Simulate sales predictions under new temperature and rainfall conditions to test various scenarios.
+
+### ❌ 5. Exit
+- Close the application.
 
 ## 🧠 Models Trained
 - Linear Regression
