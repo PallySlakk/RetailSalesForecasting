@@ -66,66 +66,40 @@ retail_sales_forecasting/
 ---
 
 
----
-
 ## 🔧 Installation
-
 pip install -r requirements.txt
 
-
----
-
 ## 🏗️ Run the ML Pipeline
-
 Build features, train models, and generate metrics:
-
 python3 main.py
-
-
----
 
 ## 🖥️ Terminal Dashboard (Rich + Typer)
 
 ### 📊 View Model Metrics
 python3 dashboard/app.py metrics
 
-
 ### 🔍 Browse Validation Predictions
-
 python3 dashboard/app.py browse
 
 ### 🌦️ Inspect Weather vs Sales
-
 python3 dashboard/app.py weather
-
 
 ### 🧪 What-If Simulator
 Simulate new temperature & rainfall conditions:
-
-
 python3 dashboard/app.py simulate
 
-
-
----
-
 ## 🧠 Models Trained
-
-- Linear Regression  
-- Random Forest  
-- XGBoost  
+- Linear Regression
+- Random Forest
+- XGBoost
 
 Model artifacts and metric reports are saved automatically after running the pipeline.
 
----
-
 ## 📝 Notes
-
-- This project follows the practicum proposal for **Retail Sales Forecasting Using Machine Learning Techniques**.  
-- Weather and sales signals are merged at the daily store level.  
-- The terminal dashboard provides fast navigation and clear visualization without requiring a web UI.  
-
----
+- This project follows the practicum proposal for Retail Sales Forecasting Using Machine Learning Techniques.
+- Weather and sales signals are merged at the daily store level.
+- The terminal dashboard provides fast navigation and clear visualization without requiring a web UI.
 
 ## 📌 Author
-PallySlakk’s Practicum — Retail Sales Forecasting  
+PallySlakk’s Practicum — Retail Sales Forecasting
+
