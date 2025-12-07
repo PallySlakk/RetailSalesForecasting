@@ -2,7 +2,7 @@
 
 """
 Enhanced Interactive CLI Dashboard for Retail Sales Forecasting
-Now includes:
+includes:
  - Rich-powered navigation menu
  - Numeric option selection with validation
  - Auto-return to Home Menu after every action
@@ -28,7 +28,7 @@ console = Console()
 # ----------------------------------------------------------
 
 ROOT = Path(__file__).resolve().parent
-sys.path.append(str(ROOT.parent))   # FIXED for correct imports
+sys.path.append(str(ROOT.parent))   # allow "from config import ..." from project root
 
 from config import (
     METRICS_DIR,
@@ -48,7 +48,7 @@ from config import (
 def banner():
     console.print(
         Panel.fit(
-            "[bold cyan]Retail Sales Forecasting CLI Dashboard[/]\n"
+            "[bold cyan]Retail Sales Forecasting UI[/]\n"
             "[green]Kaggle Store Sales + NOAA Weather[/]",
             border_style="cyan"
         )
@@ -78,9 +78,22 @@ def load_models():
         for p in MODELS_DIR.glob("*.joblib"):
             try:
                 models[p.stem] = load(p)
-            except:
+            except Exception:
                 pass
     return models
+
+# ----------------------------------------------------------
+# SMALL HELPER: SAFE VALUE
+# ----------------------------------------------------------
+
+def safe_value(df: pd.DataFrame, col: str, default: float) -> float:
+    """Return default if column missing OR value is NaN OR df is empty."""
+    if df.empty or col not in df.columns:
+        return default
+    val = df[col].iloc[0]
+    if pd.isna(val):
+        return default
+    return float(val)
 
 # ----------------------------------------------------------
 # METRICS VIEW
@@ -100,7 +113,12 @@ def view_metrics():
     table.add_column("MAPE (%)", justify="right")
 
     for model, vals in metrics.items():
-        table.add_row(model, f"{vals['MAE']:.2f}", f"{vals['RMSE']:.2f}", f"{vals['MAPE']:.2f}")
+        table.add_row(
+            model,
+            f"{vals['MAE']:.2f}",
+            f"{vals['RMSE']:.2f}",
+            f"{vals['MAPE']:.2f}",
+        )
 
     console.print(table)
 
@@ -115,6 +133,7 @@ def browse_predictions():
         console.print("[red]No validation predictions found.[/]")
         return
 
+    console.print("[bold cyan]Sample validation predictions (first 20 rows):[/]")
     console.print(df.head(20))
 
 # ----------------------------------------------------------
@@ -128,7 +147,13 @@ def weather_sales():
         console.print("[red]No merged dataset found.[/]")
         return
 
-    console.print(df[[DATE_COLUMN, STORE_COLUMN, FAMILY_COLUMN, TARGET_COLUMN, "tavg", "prcp"]].head(20))
+    cols = [DATE_COLUMN, STORE_COLUMN, FAMILY_COLUMN, TARGET_COLUMN]
+    for c in ["tavg", "prcp"]:
+        if c in df.columns:
+            cols.append(c)
+
+    console.print("[bold green]Sample weather + sales rows (first 20):[/]")
+    console.print(df[cols].head(20))
 
 # ----------------------------------------------------------
 # WHAT-IF SIMULATION
@@ -140,28 +165,29 @@ def simulate():
     models = load_models()
 
     if features.empty:
-        console.print("[red]Features missing — run pipeline first.[/]")
+        console.print("[red]Features missing — run python3 main.py first.[/]")
         return
 
     if not models:
-        console.print("[red]No models found.[/]")
+        console.print("[red]No trained models found in the models/ folder.[/]")
         return
 
     # List models
     console.print("\n[bold cyan]Available Models:[/]")
-    for i, m in enumerate(models, start=1):
+    model_names = list(models.keys())
+    for i, m in enumerate(model_names, start=1):
         console.print(f"{i}. {m}")
 
-    # Numeric selection
+    # Numeric selection with validation
     while True:
         try:
             selection = int(Prompt.ask("\nChoose model number"))
-            if 1 <= selection <= len(models):
-                model_name = list(models.keys())[selection - 1]
+            if 1 <= selection <= len(model_names):
+                model_name = model_names[selection - 1]
                 break
             else:
                 console.print("[red]Invalid option. Try again.[/]")
-        except:
+        except Exception:
             console.print("[red]Please enter a valid number.[/]")
 
     model = models[model_name]
@@ -171,45 +197,66 @@ def simulate():
         try:
             store = int(Prompt.ask("Enter store number"))
             break
-        except:
+        except Exception:
             console.print("[red]Store must be a number. Try again.[/]")
 
+    # Family selection
     family = Prompt.ask("Enter product family")
 
     base = (
-        features[(features[STORE_COLUMN] == store) &
-                 (features[FAMILY_COLUMN] == family)]
+        features[
+            (features[STORE_COLUMN] == store)
+            & (features[FAMILY_COLUMN] == family)
+        ]
         .sort_values(DATE_COLUMN)
         .tail(1)
     )
+
     if base.empty:
-        console.print("[red]No records for this store/family.[/]")
+        console.print("[red]No feature rows for this store/family combination.[/]")
         return
 
-    tavg0 = float(base.get("tavg", pd.Series([20.0])).iloc[0])
-    prcp0 = float(base.get("prcp", pd.Series([0.0])).iloc[0])
+    # Use safe defaults when any weather is missing/NaN
+    tavg0 = safe_value(base, "tavg", 20.0)
+    prcp0 = safe_value(base, "prcp", 0.0)
+    tmax0 = safe_value(base, "tmax", tavg0 + 3.0)
+    tmin0 = safe_value(base, "tmin", tavg0 - 3.0)
 
     console.print(
-        f"\n[bold green]Current Conditions:[/]\n"
+        f"\n[bold green]Current Conditions (baseline row):[/]\n"
         f"• tavg = {tavg0}\n"
+        f"• tmax = {tmax0}\n"
+        f"• tmin = {tmin0}\n"
         f"• prcp = {prcp0}\n"
     )
 
-    # New weather
+    # New weather – keep prompting until numbers are valid
     while True:
         try:
-            tavg_new = float(Prompt.ask("Enter new Avg Temperature", default=str(tavg0)))
-            prcp_new = float(Prompt.ask("Enter new Rainfall", default=str(prcp0)))
+            tavg_new = float(
+                Prompt.ask(
+                    "Enter new Avg Temperature (°C)",
+                    default=str(round(tavg0, 1)),
+                )
+            )
+            prcp_new = float(
+                Prompt.ask(
+                    "Enter new Rainfall (mm)",
+                    default=str(round(prcp0, 1)),
+                )
+            )
             break
-        except:
-            console.print("[red]Invalid number. Try again.[/]")
+        except Exception:
+            console.print("[red]Invalid numeric input. Try again.[/]")
 
+    # Build simulated feature row
     sim = base.copy()
     sim["tavg"] = tavg_new
-    sim["tmax"] = tavg_new + 3
-    sim["tmin"] = tavg_new - 3
+    sim["tmax"] = tavg_new + 3.0
+    sim["tmin"] = tavg_new - 3.0
     sim["prcp"] = prcp_new
-    sim["temp_x_prcp"] = sim["tavg"] * sim["prcp"]
+    if "temp_x_prcp" in sim.columns:
+        sim["temp_x_prcp"] = sim["tavg"] * sim["prcp"]
 
     pred = float(model.predict(sim)[0])
     actual = float(base[TARGET_COLUMN].iloc[0])
@@ -220,8 +267,8 @@ def simulate():
             f"[cyan]Baseline: {actual:,.2f}\n"
             f"[magenta]Prediction: {pred:,.2f}\n"
             f"[green]Change: {diff:+,.2f}[/]",
-            title="Simulation Result",
-            border_style="yellow"
+            title=f"Simulation Result ({model_name})",
+            border_style="yellow",
         )
     )
 
@@ -263,7 +310,7 @@ def home_menu():
         input("")
 
 # ----------------------------------------------------------
-# ENTRY POINT (IGNORES TYPER, USES OWN MENU)
+# ENTRY POINT
 # ----------------------------------------------------------
 
 if __name__ == "__main__":
