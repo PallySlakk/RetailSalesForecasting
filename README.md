@@ -41,12 +41,13 @@ A complete end-to-end machine learning system for forecasting daily retail sales
 ```text
 retail_sales_forecasting/
 │
-├── main.py                   # Full ML pipeline (data → features → models → metrics)
+├── main.py     # Full ML pipeline (data → features → models → metrics)
+├── app.py        # Terminal dashboard (Rich + Typer)         
 ├── config.py                 # Central configuration file
 ├── requirements.txt          # Project dependencies
 │
 ├── dashboard/
-│   └── app.py                # Terminal dashboard (Rich + Typer)
+│   └── app.py                # Streamlit dashboard
 │
 ├── data/
 │   ├── raw/                  # Raw input data (sales + weather)
@@ -76,17 +77,17 @@ python3 main.py
 ## 🖥️ Terminal Dashboard (Rich + Typer)
 
 ### 📊 View Model Metrics
-python3 dashboard/app.py metrics
+python3 app.py metrics
 
 ### 🔍 Browse Validation Predictions
-python3 dashboard/app.py browse
+python3 app.py browse
 
 ### 🌦️ Inspect Weather vs Sales
-python3 dashboard/app.py weather
+python3 app.py weather
 
 ### 🧪 What-If Simulator
 Simulate new temperature & rainfall conditions:
-python3 dashboard/app.py simulate
+python3 app.py simulate
 
 ## 🧠 Models Trained
 - Linear Regression
@@ -99,6 +100,10 @@ Model artifacts and metric reports are saved automatically after running the pip
 - This project follows the practicum proposal for Retail Sales Forecasting Using Machine Learning Techniques.
 - Weather and sales signals are merged at the daily store level.
 - The terminal dashboard provides fast navigation and clear visualization without requiring a web UI.
+
+
+## Optional- Streamlit Dashboard
+-python3 dashboard/app.py
 
 ## 📌 Author
 PallySlakk’s Practicum — Retail Sales Forecasting
