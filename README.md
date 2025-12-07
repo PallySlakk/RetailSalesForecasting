@@ -62,9 +62,9 @@ retail_sales_forecasting/
     ├── data/                 # Data loading & preprocessing modules
     ├── features/             # Feature engineering modules
     └── models/               # Training, evaluation, and forecasting modules
+```
 
----
-
+----
 
 ## 🔧 Installation
 pip install -r requirements.txt
