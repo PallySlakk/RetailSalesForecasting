@@ -103,7 +103,7 @@ Model artifacts and metric reports are saved automatically after running the pip
 
 
 ## Optional- Streamlit Dashboard
--python3 dashboard/app.py
+- python3 dashboard/app.py
 
 ## 📌 Author
 PallySlakk’s Practicum — Retail Sales Forecasting
